@@ -8,7 +8,7 @@ import Sidebar from './Sidebar'
 import MyDay from './MyDay'
 import Tasks from './Tasks'
 import NotesList from './NotesList'
-import ListManager from './ListManager'
+/* import ListManager from './ListManager' */
 import UserProfile from './UserProfile'
 
 interface Task {
@@ -96,7 +96,7 @@ export default function Dashboard() {
       >
         {renderSection()}
         <UserProfile />
-        <ListManager />
+        {/* <ListManager /> */}
       </Box>
     </Flex>
   )
