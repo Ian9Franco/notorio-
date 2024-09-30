@@ -6,29 +6,22 @@ import { auth, db } from '../db/firebase'
 import { ref, onValue } from 'firebase/database'
 import Sidebar from './Sidebar'
 import MyDay from './MyDay'
+import Important from './Important'
+import Planned from './Planned'
 import Tasks from './Tasks'
-import NotesList from './NotesList'
-import ListManager from './ListManager'
-import UserProfile from './UserProfile'
+import Notes from './Notes'
 
 interface Task {
   id: string;
   text: string;
   completed: boolean;
+  createdAt: string;
+  category: 'myDay' | 'important' | 'planned' | 'tasks';
+  dueDate?: string;
 }
 
 interface Note {
   id: string;
-  content: string;
-  createdAt: string;
-}
-
-interface FirebaseTask {
-  text: string;
-  completed: boolean;
-}
-
-interface FirebaseNote {
   content: string;
   createdAt: string;
 }
@@ -51,14 +44,14 @@ export default function Dashboard() {
       onValue(tasksRef, (snapshot) => {
         const data = snapshot.val()
         if (data) {
-          setTasks(Object.entries(data).map(([id, task]) => ({ id, ...(task as FirebaseTask) })))
+          setTasks(Object.entries(data).map(([id, task]) => ({ id, ...(task as Omit<Task, 'id'>) })))
         }
       })
 
       onValue(notesRef, (snapshot) => {
         const data = snapshot.val()
         if (data) {
-          setNotes(Object.entries(data).map(([id, note]) => ({ id, ...(note as FirebaseNote) })))
+          setNotes(Object.entries(data).map(([id, note]) => ({ id, ...(note as Omit<Note, 'id'>) })))
         }
       })
     }
@@ -67,13 +60,17 @@ export default function Dashboard() {
   const renderSection = () => {
     switch (currentSection) {
       case 'myDay':
-        return <MyDay tasks={tasks} />
+        return <MyDay tasks={tasks.filter(task => task.category === 'myDay')} />
+      case 'important':
+        return <Important tasks={tasks.filter(task => task.category === 'important')} />
+      case 'planned':
+        return <Planned tasks={tasks.filter(task => task.category === 'planned')} />
       case 'tasks':
         return <Tasks tasks={tasks} />
       case 'notes':
-        return <NotesList notes={notes} />
+        return <Notes notes={notes} />
       default:
-        return <MyDay tasks={tasks} />
+        return <MyDay tasks={tasks.filter(task => task.category === 'myDay')} />
     }
   }
 
@@ -95,16 +92,13 @@ export default function Dashboard() {
         ml={isOpen ? '250px' : '60px'}
       >
         {renderSection()}
-        <UserProfile />
-        <ListManager />
       </Box>
     </Flex>
   )
 }
 
 // Comentarios en español:
-// Este es el componente principal del dashboard.
-// Maneja el estado de la sección actual, las tareas y las notas.
-// Utiliza Firebase Realtime Database para obtener las tareas y notas del usuario.
-// Renderiza diferentes secciones basadas en la selección del usuario.
-// La barra lateral es colapsable y el contenido principal se ajusta en consecuencia.
+// Este componente es el panel principal de la aplicación.
+// Maneja la navegación entre las diferentes secciones: "Mi día", "Importante", "Planeado", "Tareas" y "Notas".
+// Obtiene las tareas y notas del usuario desde Firebase y las distribuye a los componentes correspondientes.
+// La interfaz se ajusta según si la barra lateral está abierta o cerrada.

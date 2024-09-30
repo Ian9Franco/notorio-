@@ -11,13 +11,16 @@ import {
   Text,
   useColorModeValue,
   Checkbox,
+  HStack,
 } from '@chakra-ui/react'
-import { AddIcon } from '@chakra-ui/icons'
+import { AddIcon, StarIcon, CalendarIcon } from '@chakra-ui/icons'
 
 interface Task {
   id: string;
   text: string;
   completed: boolean;
+  createdAt: string;
+  category: 'myDay' | 'important' | 'planned' | 'tasks';
 }
 
 interface MyDayProps {
@@ -30,14 +33,14 @@ export default function MyDay({ tasks }: MyDayProps) {
   const borderColor = useColorModeValue('gray.200', 'gray.600')
 
   const handleAddTask = () => {
-    // Implement task addition logic here
-    console.log('Adding task:', newTask)
+    // Implementar lógica para agregar tarea
+    console.log('Agregando tarea:', newTask)
   }
 
-  const todayTasks = tasks.filter(() => {
-    // Implement logic to determine if a task is for today
-    return true // Placeholder
-  })
+  const handleExtendTask = (taskId: string, category: 'important' | 'planned') => {
+    // Implementar lógica para extender tarea
+    console.log(`Extendiendo tarea ${taskId} a ${category}`)
+  }
 
   return (
     <Flex>
@@ -55,11 +58,24 @@ export default function MyDay({ tasks }: MyDayProps) {
           </Button>
         </Flex>
         <VStack align="stretch" spacing={2}>
-          {todayTasks.map((task) => (
+          {tasks.map((task) => (
             <Box key={task.id} p={2} bg={bg} borderRadius="md" borderWidth={1} borderColor={borderColor}>
-              <Checkbox isChecked={task.completed}>
-                <Text as={task.completed ? 's' : 'span'}>{task.text}</Text>
-              </Checkbox>
+              <Flex justify="space-between" align="center">
+                <Checkbox isChecked={task.completed}>
+                  <Text as={task.completed ? 's' : 'span'}>{task.text}</Text>
+                </Checkbox>
+                <HStack>
+                  <Button size="sm" onClick={() => handleExtendTask(task.id, 'important')}>
+                    <StarIcon />
+                  </Button>
+                  <Button size="sm" onClick={() => handleExtendTask(task.id, 'planned')}>
+                    <CalendarIcon />
+                  </Button>
+                </HStack>
+              </Flex>
+              <Text fontSize="xs" color="gray.500" mt={1}>
+                Creada el: {new Date(task.createdAt).toLocaleString()}
+              </Text>
             </Box>
           ))}
         </VStack>
@@ -67,11 +83,18 @@ export default function MyDay({ tasks }: MyDayProps) {
       <Box w="300px" bg={bg} p={4} borderRadius="md" borderWidth={1} borderColor={borderColor}>
         <Heading size="md" mb={4}>Sugerencias</Heading>
         <VStack align="stretch" spacing={2}>
-          {/* Add suggestion items here */}
-          <Text>Sugerencia 1</Text>
-          <Text>Sugerencia 2</Text>
+          {tasks.filter(task => task.category === 'important').map((task) => (
+            <Text key={task.id}>{task.text}</Text>
+          ))}
         </VStack>
       </Box>
     </Flex>
   )
 }
+
+// Comentarios en español:
+// Este componente representa la sección "Mi día".
+// Muestra las tareas del día actual y permite agregar nuevas tareas.
+// Cada tarea puede ser marcada como completada, importante o planeada.
+// Incluye un panel de sugerencias que muestra las tareas importantes.
+// La fecha de creación se muestra para cada tarea.

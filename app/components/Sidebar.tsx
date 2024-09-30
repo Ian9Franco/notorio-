@@ -16,8 +16,6 @@ import {
   FaSun,
   FaStar,
   FaCalendar,
-  FaUser,
-  FaEnvelope,
   FaTasks,
   FaMoon,
   FaBars,
@@ -41,8 +39,6 @@ export default function Sidebar({ isOpen, onToggle, onSectionChange, currentSect
     { icon: FaSun, text: 'Mi día', section: 'myDay' },
     { icon: FaStar, text: 'Importante', section: 'important' },
     { icon: FaCalendar, text: 'Planeado', section: 'planned' },
-    { icon: FaUser, text: 'Asignadas a mí', section: 'assignedToMe' },
-    { icon: FaEnvelope, text: 'Marcado', section: 'flagged' },
     { icon: FaTasks, text: 'Tareas', section: 'tasks' },
   ]
 
@@ -100,3 +96,9 @@ export default function Sidebar({ isOpen, onToggle, onSectionChange, currentSect
     </Box>
   )
 }
+
+// Comentarios en español:
+// Este componente representa la barra lateral de la aplicación.
+// Incluye secciones para "Mi día", "Importante", "Planeado", "Tareas" y "Notas".
+// También incluye un botón para alternar entre modo claro y oscuro.
+// La barra lateral se puede colapsar para mostrar solo iconos.
